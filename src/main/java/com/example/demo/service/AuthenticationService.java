@@ -8,6 +8,4 @@ public interface AuthenticationService {
 
     boolean verifyToken(String accountNumber, String token);
 
-	void getAccountNumber();
-
 }

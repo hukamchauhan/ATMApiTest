@@ -285,7 +285,59 @@ public class DepositWithdrawRestControllerTest extends AbstractTest {
 	    int status1 = mvcResult.getResponse().getStatus();
 	    assertEquals(200, status);
 	    String content1 = mvcResult1.getResponse().getContentAsString();
-	    assertEquals("Insufficient fund", content1);
+	    assertEquals("Insufficient fund.", content1);
+	}
+	
+	@Test
+	public void withdrawInvalidAmount() throws Exception {
+		String uri = "/accountTransaction/gettoken";
+		ATMAccountDetails account = new ATMAccountDetails();
+		account.setDebitCardNumber("112233445566");
+		account.setCode("5569");
+		account.setBank("SBI");
+		account.setAmount(10000);
+		
+		String inputJson = super.mapToJson(account);
+		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri)
+		         .contentType(MediaType.APPLICATION_JSON_VALUE)
+		         .content(inputJson)).andReturn();
+		int status = mvcResult.getResponse().getStatus();
+	    assertEquals(200, status);
+	    
+	    String content = mvcResult.getResponse().getContentAsString();
+	    String uri1 = "/accountTransaction/withdraw/"+content+"/"+account.getDebitCardNumber()+"/"+account.getAmount()+"sdf";
+	    MvcResult mvcResult1 = mvc.perform(MockMvcRequestBuilders.get(uri1)
+	            .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+	    int status1 = mvcResult.getResponse().getStatus();
+	    assertEquals(200, status);
+	    String content1 = mvcResult1.getResponse().getContentAsString();
+	    assertEquals("Please provide correct amount without decimals.", content1);
+	}
+	
+	@Test
+	public void withdrawInvalidToken() throws Exception {
+		String uri = "/accountTransaction/gettoken";
+		ATMAccountDetails account = new ATMAccountDetails();
+		account.setDebitCardNumber("112233445566");
+		account.setCode("5569");
+		account.setBank("SBI");
+		account.setAmount(10000);
+		
+		String inputJson = super.mapToJson(account);
+		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri)
+		         .contentType(MediaType.APPLICATION_JSON_VALUE)
+		         .content(inputJson)).andReturn();
+		int status = mvcResult.getResponse().getStatus();
+	    assertEquals(200, status);
+	    
+	    String content = mvcResult.getResponse().getContentAsString();
+	    String uri1 = "/accountTransaction/withdraw/"+content+"a"+"/"+account.getDebitCardNumber()+"/"+account.getAmount();
+	    MvcResult mvcResult1 = mvc.perform(MockMvcRequestBuilders.get(uri1)
+	            .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+	    int status1 = mvcResult.getResponse().getStatus();
+	    assertEquals(200, status);
+	    String content1 = mvcResult1.getResponse().getContentAsString();
+	    assertEquals("Invalid Token", content1);
 	}
 	
 	@Test
@@ -295,7 +347,7 @@ public class DepositWithdrawRestControllerTest extends AbstractTest {
 		account.setDebitCardNumber("112233445566");
 		account.setCode("5569");
 		account.setBank("SBI");
-		account.setAmount(5000);
+		account.setAmount(100);
 		
 		String inputJson = super.mapToJson(account);
 		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri)
@@ -337,7 +389,7 @@ public class DepositWithdrawRestControllerTest extends AbstractTest {
 	    int status1 = mvcResult.getResponse().getStatus();
 	    assertEquals(200, status);
 	    String content1 = mvcResult1.getResponse().getContentAsString();
-	    assertEquals("You can deposit only 10000 at once.", content1);
+	    assertEquals("You can withdraw only 10000 at once.", content1);
 	}
 	
 	@Test
@@ -347,7 +399,7 @@ public class DepositWithdrawRestControllerTest extends AbstractTest {
 		account.setDebitCardNumber("112233445566");
 		account.setCode("5569");
 		account.setBank("SBI");
-		account.setAmount(50000);
+		account.setAmount(50001);
 		
 		String inputJson = super.mapToJson(account);
 		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri)
@@ -363,7 +415,59 @@ public class DepositWithdrawRestControllerTest extends AbstractTest {
 	    int status1 = mvcResult.getResponse().getStatus();
 	    assertEquals(200, status);
 	    String content1 = mvcResult1.getResponse().getContentAsString();
-	    assertEquals("success", content1);
+	    assertEquals("You can deposit only 50000 at once.", content1);
+	}
+	
+	@Test
+	public void depositFailedInvalidAmount() throws Exception {
+		String uri = "/accountTransaction/gettoken";
+		ATMAccountDetails account = new ATMAccountDetails();
+		account.setDebitCardNumber("112233445566");
+		account.setCode("5569");
+		account.setBank("SBI");
+		account.setAmount(50000);
+		
+		String inputJson = super.mapToJson(account);
+		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri)
+		         .contentType(MediaType.APPLICATION_JSON_VALUE)
+		         .content(inputJson)).andReturn();
+		int status = mvcResult.getResponse().getStatus();
+	    assertEquals(200, status);
+	    
+	    String content = mvcResult.getResponse().getContentAsString();
+	    String uri1 = "/accountTransaction/deposit/"+content+"/"+account.getDebitCardNumber()+"/"+account.getAmount()+"a";
+	    MvcResult mvcResult1 = mvc.perform(MockMvcRequestBuilders.get(uri1)
+	            .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+	    int status1 = mvcResult.getResponse().getStatus();
+	    assertEquals(200, status);
+	    String content1 = mvcResult1.getResponse().getContentAsString();
+	    assertEquals("Please provide correct amount without decimals.", content1);
+	}
+	
+	@Test
+	public void depositFailedInvalidToken() throws Exception {
+		String uri = "/accountTransaction/gettoken";
+		ATMAccountDetails account = new ATMAccountDetails();
+		account.setDebitCardNumber("112233445566");
+		account.setCode("5569");
+		account.setBank("SBI");
+		account.setAmount(50000);
+		
+		String inputJson = super.mapToJson(account);
+		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri)
+		         .contentType(MediaType.APPLICATION_JSON_VALUE)
+		         .content(inputJson)).andReturn();
+		int status = mvcResult.getResponse().getStatus();
+	    assertEquals(200, status);
+	    
+	    String content = mvcResult.getResponse().getContentAsString();
+	    String uri1 = "/accountTransaction/deposit/"+content+"a"+"/"+account.getDebitCardNumber()+"/"+account.getAmount();
+	    MvcResult mvcResult1 = mvc.perform(MockMvcRequestBuilders.get(uri1)
+	            .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+	    int status1 = mvcResult.getResponse().getStatus();
+	    assertEquals(200, status);
+	    String content1 = mvcResult1.getResponse().getContentAsString();
+	    assertEquals("Invalid Token", content1);
 	}
 
 }
